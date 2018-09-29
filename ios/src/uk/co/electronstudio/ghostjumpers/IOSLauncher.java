@@ -5,10 +5,8 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import org.robovm.rt.GC;
 import uk.me.fantastic.retro.EmptyCallback;
 import uk.me.fantastic.retro.SimpleApp;
-;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
@@ -16,7 +14,7 @@ public class IOSLauncher extends IOSApplication.Delegate {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
 
 
-        SimpleApp app = new SimpleApp(new EmptyCallback(), "Ghost Jumpers", new PimpGameFactory(), new IOSLogger(), new IOSManualGC());
+        SimpleApp app = new SimpleApp(new EmptyCallback(), "Ghost Jumpers", new SnakeFactory(), new IOSLogger(), new IOSManualGC());
         return new IOSApplication(app, config);
     }
 
