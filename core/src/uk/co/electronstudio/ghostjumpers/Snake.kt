@@ -21,7 +21,7 @@ class Snake(
         var color: Color,
         var direction: Direction,
         startingPoint: Point,
-        var maxLength: Int = 5)
+        var maxLength: Int = 5):Collidable
 {
     fun doDrawing(batch: Batch) {
         for (point in body) {
@@ -48,10 +48,14 @@ class Snake(
         else if (player.input.leftStick.y > 0.5) { direction = Direction.SOUTH }
     }
 
-    fun hasCollidedWith(snake2: Snake): Boolean {
+    fun hasCollidedWith(snake2: Collidable): Boolean {
         val myHead = body.first()
 
-        snake2.body.forEach{
+        return snake2.testSnakeCollision()
+    }
+
+    override fun testSnakeCollision(snake: Snake){
+        body.forEach{
             if(myHead.x == it.x && myHead.y == it.y) {
                 println("Dead stuff")
                 return true

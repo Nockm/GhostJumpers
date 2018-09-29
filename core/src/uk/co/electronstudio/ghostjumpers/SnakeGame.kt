@@ -39,6 +39,8 @@ class SnakeGame(session: GameSession) :
 
     val snakes = ArrayList<Snake>()
 
+    var food = getRandomPoint()
+
     init {
         font.data.markupEnabled = true
     }
@@ -68,7 +70,7 @@ class SnakeGame(session: GameSession) :
     override fun doLogic(deltaTime: Float) {
         for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
             noOfPlayersInGameAlready++
-            snakes.add(Snake(players[i], players[i].color, Direction.SOUTH, Point(MathUtils.random(0, 100), MathUtils.random(0, 100))))
+            snakes.add(Snake(players[i], players[i].color, Direction.SOUTH, getRandomPoint()))
         }
 
         timer += deltaTime
@@ -82,6 +84,8 @@ class SnakeGame(session: GameSession) :
             snake.doInput()
         }
     }
+
+    private fun getRandomPoint() = Point(MathUtils.random(0, 100), MathUtils.random(0, 100))
 
     private fun doGameoverLogic() {
 //        if (timer > 1f && players.any { it.input.fire }) {
