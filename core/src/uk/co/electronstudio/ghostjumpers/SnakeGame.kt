@@ -12,9 +12,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.MapObject
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Align
 import javafx.scene.image.PixelFormat
+import sun.audio.AudioPlayer.player
 import uk.me.fantastic.retro.App
 import uk.me.fantastic.retro.Player
 import uk.me.fantastic.retro.Prefs
@@ -47,19 +49,36 @@ class SnakeGame(session: GameSession) :
 
     var noOfPlayersInGameAlready = 0
     var timer = 0f
+    var delay = 0.02f
 
-    val dot: Texture
+    val snakes = ArrayList<Snake>()
+
     init {
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(Color.PINK)
-        pixmap.drawPixel(0,0)
-        dot = Texture(pixmap)
         font.data.markupEnabled = true
     }
 
+    fun tick() {
+        for (snake in snakes) {
+            snake.tick()
+        }
+    }
+
     override fun doLogic(deltaTime: Float) {
+        for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
+            noOfPlayersInGameAlready++
+            snakes.add(Snake(players[i], players[i].color, Direction.SOUTH, Point(MathUtils.random(0, 100), MathUtils.random(0, 100))))
+        }
+
         timer += deltaTime
-        doGameLogic(deltaTime)
+
+        if (timer > delay) {
+            timer = 0f
+            tick()
+        }
+
+        for (snake in snakes) {
+            snake.doInput()
+        }
     }
 
     private fun doGameoverLogic() {
@@ -67,13 +86,12 @@ class SnakeGame(session: GameSession) :
 //        }
     }
 
-    private fun doGameLogic(delta: Float) {
-        checkForNewPlayerJoins()
-    }
-
     override fun doDrawing(batch: Batch) {
         println("It's doing it")
-        batch.draw(dot, 30f, 30f)
+
+        for (snake in snakes) {
+            snake.doDrawing(batch)
+        }
     }
 
 //    private fun drawText(batch: Batch) {
@@ -99,12 +117,6 @@ class SnakeGame(session: GameSession) :
 //    private fun timeleft(): Int {
 //        return (timeLimit - timer).toInt()
 //    }
-
-    private fun checkForNewPlayerJoins() {
-        for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
-            noOfPlayersInGameAlready++
-        }
-    }
 
     override fun show() {
         if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
