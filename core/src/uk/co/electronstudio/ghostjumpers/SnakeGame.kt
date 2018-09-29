@@ -3,6 +3,7 @@ package uk.co.electronstudio.ghostjumpers
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -13,6 +14,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.utils.Align
+import javafx.scene.image.PixelFormat
 import uk.me.fantastic.retro.App
 import uk.me.fantastic.retro.Player
 import uk.me.fantastic.retro.Prefs
@@ -24,7 +26,7 @@ import uk.me.fantastic.retro.screens.GameSession
 /* The God class */
 class SnakeGame(session: GameSession) :
         SimpleGame(session,
-                320f, 240f, font, font) {
+                100f, 100f, font, font, false) {
 
     override val MAX_FPS = 250f
     override val MIN_FPS = 20f
@@ -46,7 +48,12 @@ class SnakeGame(session: GameSession) :
     var noOfPlayersInGameAlready = 0
     var timer = 0f
 
+    val dot: Texture
     init {
+        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+        pixmap.setColor(Color.PINK)
+        pixmap.drawPixel(0,0)
+        dot = Texture(pixmap)
         font.data.markupEnabled = true
     }
 
@@ -65,14 +72,8 @@ class SnakeGame(session: GameSession) :
     }
 
     override fun doDrawing(batch: Batch) {
-//        if (levelFinished) {
-//            drawEndOfLevelScreen(batch)
-//        } else {
-            drawGame(batch)
-//        }
-    }
-
-    private fun drawGame(batch: Batch) {
+        println("It's doing it")
+        batch.draw(dot, 30f, 30f)
     }
 
 //    private fun drawText(batch: Batch) {

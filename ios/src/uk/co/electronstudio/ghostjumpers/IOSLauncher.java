@@ -14,7 +14,7 @@ public class IOSLauncher extends IOSApplication.Delegate {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
 
 
-        SimpleApp app = new SimpleApp(new EmptyCallback(), "Ghost Jumpers", new SnakeFactory(), new IOSLogger(), new IOSManualGC());
+        SimpleApp app = new SimpleApp(new EmptyCallback(), "Ghost Jumpers", new SnakeFactory(), new IOSLogger(), new IOSManualGC(), false);
         return new IOSApplication(app, config);
     }
 
