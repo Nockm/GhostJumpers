@@ -1,28 +1,14 @@
 package uk.co.electronstudio.ghostjumpers
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.maps.MapObject
-import com.badlogic.gdx.maps.objects.RectangleMapObject
-import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.utils.Align
-import javafx.scene.image.PixelFormat
-import sun.audio.AudioPlayer.player
 import uk.me.fantastic.retro.App
-import uk.me.fantastic.retro.Player
 import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.SimpleGame
-import uk.me.fantastic.retro.isMobile
-import uk.me.fantastic.retro.renderTileMapToTexture
 import uk.me.fantastic.retro.screens.GameSession
 
 /* The God class */
@@ -59,8 +45,24 @@ class SnakeGame(session: GameSession) :
 
     fun tick() {
         for (snake in snakes) {
-            snake.tick()
+            snake.move()
         }
+
+        val deadSnakes = ArrayList<Snake>()
+
+        for (snake1 in snakes) {
+            for (snake2 in snakes) {
+                if (snake1 != snake2) {
+                    if (snake1.hasCollidedWith(snake2)) {
+                        deadSnakes.add(snake1)
+                    }
+                }
+            }
+        }
+
+        snakes.removeAll(deadSnakes)
+
+        deadSnakes.clear()
     }
 
     override fun doLogic(deltaTime: Float) {

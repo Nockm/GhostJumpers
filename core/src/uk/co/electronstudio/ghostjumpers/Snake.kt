@@ -29,7 +29,7 @@ class Snake(
         }
     }
 
-    fun tick() {
+    fun move() {
         val oldHead = body.first()
         val newHead = Point(oldHead.x + direction.vx, oldHead.y + direction.vy)
 
@@ -48,6 +48,18 @@ class Snake(
         else if (player.input.leftStick.y > 0.5) { direction = Direction.SOUTH }
     }
 
+    fun hasCollidedWith(snake2: Snake): Boolean {
+        val myHead = body.first()
+
+        snake2.body.forEach{
+            if(myHead.x == it.x && myHead.y == it.y) {
+                println("Dead stuff")
+                return true
+            }
+        }
+        return false
+    }
+
     val body: Body = ArrayList<Point>()
     var dot: Texture
     init {
@@ -57,8 +69,6 @@ class Snake(
         pixmap.drawPixel(0,0)
         dot = Texture(pixmap)
     }
-
-
 }
 
 private val <A, B> Pair<A, B>.x: A
