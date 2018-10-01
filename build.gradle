@@ -28,7 +28,7 @@ allprojects {
         aiVersion = '1.8.0'
         gdxUtilsVersion = '0.13.4'
 
-        appName = "GhostJumpers"
+        appName = "SnakeEaters"
 
         roboVMVersion = '2.3.0'
 
@@ -106,7 +106,7 @@ project(":core") {
     jar {
         manifest {
             attributes("RetroWar-Version": "0.14",
-                    "Factory-Class": "uk.co.electronstudio.ghostjumpers.PimpGameFactory"
+                    "Factory-Class": "uk.co.electronstudio.snakeeaters.SnakeFactory"
             )
         }
     }
