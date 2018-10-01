@@ -4,17 +4,22 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.Rectangle
+import uk.co.electronstudio.snakeeaters.Direction.EAST
+import uk.co.electronstudio.snakeeaters.Direction.NORTH
+import uk.co.electronstudio.snakeeaters.Direction.SOUTH
+import uk.co.electronstudio.snakeeaters.Direction.WEST
+import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.arena
 import uk.me.fantastic.retro.Player
-import uk.co.electronstudio.snakeeaters.Direction.*
 
 enum class Direction(val vx: Int, val vy: Int) {
     NORTH(0, 1),
-    SOUTH(0,-1),
+    SOUTH(0, -1),
     WEST(-1, 0),
     EAST(1, 0),
 }
 
-typealias Point = Pair<Int,Int>
+typealias Point = Pair<Int, Int>
 typealias Body = MutableList<Point>
 
 class Snake(
@@ -22,8 +27,7 @@ class Snake(
         var color: Color,
         var direction: Direction,
         startingPoint: Point,
-        var maxLength: Int = 5)
-{
+        var maxLength: Int = 5) {
 
     val body: Body = ArrayList<Point>()
     var dot: Texture
@@ -34,7 +38,7 @@ class Snake(
         body.add(startingPoint)
         val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
         pixmap.setColor(color)
-        pixmap.drawPixel(0,0)
+        pixmap.drawPixel(0, 0)
         dot = Texture(pixmap)
     }
 
@@ -46,8 +50,12 @@ class Snake(
     }
 
     fun move() {
+        println("test ${wrap(Point(-10,-10))}")
+
         val oldHead = body.first()
-        val newHead = Point(oldHead.x + direction.vx, oldHead.y + direction.vy)
+        val newHead = wrap(Point(oldHead.x + direction.vx, oldHead.y + direction.vy))
+
+        println("$newHead")
 
         // Insert next location at head
         body.add(0, newHead)
@@ -57,9 +65,25 @@ class Snake(
         }
     }
 
+    private fun wrap(point: Point): Point {
+        return point.run {
+            Point(
+                    when {
+                        x < arena.left -> arena.right-1
+                        x > arena.right-1 -> arena.left
+                        else -> x
+                    },
+                    when {
+                        y < arena.bottom -> arena.top-1
+                        y > arena.top-1 -> arena.bottom
+                        else -> y
+                    })
+        }
+    }
+
     fun doInput() {
         player.input.leftStick.apply {
-            direction = when{
+            direction = when {
                 x < -0.5 -> WEST
                 x > 0.5 -> EAST
                 y > 0.5 -> SOUTH
@@ -69,18 +93,26 @@ class Snake(
         }
     }
 
-    fun hasCollidedWith(other: Snake): Boolean {
-        other.body.forEach{
-            if(head.x == it.x && head.y == it.y) {
-                return true
-            }
-        }
-        return false
-    }
-
+    fun hasCollidedWith(other: Snake) = other.body.any { hasCollidedWith(it) }
+    fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
 
 
 }
+
+private val Rectangle.left: Int
+    get() = x.toInt()
+
+private val Rectangle.right: Int
+    get() = (x + width).toInt()
+
+private val Rectangle.top: Int
+    get() = (y+height).toInt()
+
+private val Rectangle.bottom: Int
+    get() = y.toInt()
+
+
+
 
 private val <A, B> Pair<A, B>.x: A
     get() = first

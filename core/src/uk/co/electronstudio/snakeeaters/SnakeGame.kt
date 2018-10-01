@@ -16,13 +16,14 @@ import uk.me.fantastic.retro.screens.GameSession
 /* The God class */
 class SnakeGame(session: GameSession) :
         SimpleGame(session,
-                100f, 100f, font, font, false) {
+                50f, 50f, font, font, false) {
 
     override val MAX_FPS = 250f
     override val MIN_FPS = 20f
 
     companion object {
         private val font = BitmapFont(Gdx.files.internal("addons/GhostJumpers/c64_low3_black.fnt")) // for drawing text
+        var arena = Rectangle()
     }
 
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/jump_jade.wav"))
@@ -38,12 +39,14 @@ class SnakeGame(session: GameSession) :
     var noOfPlayersInGameAlready = 0
     var timer = 0f
     var delay = 0.4f
-    val arena = Rectangle(0f,0f,100f,100f)
+
     val snakes = ArrayList<Snake>()
-    var food = getRandomPoint()
+    var food : Point
 
     init {
         font.data.markupEnabled = true
+        arena = Rectangle(0f,0f,width,height)
+        food = getRandomPoint()
     }
 
     private fun getRandomPoint() = Point(
@@ -60,6 +63,9 @@ class SnakeGame(session: GameSession) :
         val deadSnakes = ArrayList<Snake>()
 
         for (snake1 in snakes) {
+            if (snake1.hasCollidedWith(food)){
+
+            }
             for (snake2 in snakes) {
                 if (snake1 != snake2) {
                     if (snake1.hasCollidedWith(snake2)) {
@@ -76,7 +82,7 @@ class SnakeGame(session: GameSession) :
     override fun doLogic(deltaTime: Float) {
         for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
             noOfPlayersInGameAlready++
-            snakes.add(Snake(players[i], players[i].color, Direction.SOUTH, getRandomPoint()))
+            snakes.add(Snake(players[i], players[i].color2, Direction.SOUTH, getRandomPoint()))
         }
 
         timer += deltaTime
