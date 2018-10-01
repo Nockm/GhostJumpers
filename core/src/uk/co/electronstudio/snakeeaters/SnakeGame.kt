@@ -2,6 +2,8 @@ package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -24,6 +26,13 @@ class SnakeGame(session: GameSession) :
     companion object {
         private val font = BitmapFont(Gdx.files.internal("addons/GhostJumpers/c64_low3_black.fnt")) // for drawing text
         var arena = Rectangle()
+
+        fun makePixel(color: Color): Texture {
+            val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+            pixmap.setColor(color)
+            pixmap.drawPixel(0, 0)
+            return Texture(pixmap)
+        }
     }
 
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/jump_jade.wav"))
@@ -33,12 +42,17 @@ class SnakeGame(session: GameSession) :
     val music = CrossPlatformMusic.create(desktopFile = "addons/GhostJumpers/justin1.ogg", androidFile =
     "addons/GhostJumpers/JustinLong.ogg", iOSFile = "addons/GhostJumpers/justin1.wav")
 
-    val redFlash = Animation<Color>(0.1f, Color.BLACK, Color.RED)
-    val multiFlash = Animation<String>(1f / 30f, "RED", "PURPLE", "BLUE", "CYAN", "GREEN", "YELLOW")
+    val multiFlash = Animation<Texture>(1f / 30f,
+            makePixel(Color.RED),
+            makePixel(Color.BLUE),
+            makePixel(Color.GREEN)
+    ).also {
+        it.playMode = Animation.PlayMode.LOOP
+    }
 
     var noOfPlayersInGameAlready = 0
     var timer = 0f
-    var delay = 0.4f
+    var delay = 0.1f
 
     val snakes = ArrayList<Snake>()
     var food : Point
@@ -64,7 +78,8 @@ class SnakeGame(session: GameSession) :
 
         for (snake1 in snakes) {
             if (snake1.hasCollidedWith(food)){
-
+                food = getRandomPoint()
+                snake1.maxLength++
             }
             for (snake2 in snakes) {
                 if (snake1 != snake2) {
@@ -107,6 +122,7 @@ class SnakeGame(session: GameSession) :
         for (snake in snakes) {
             snake.doDrawing(batch)
         }
+        batch.draw(multiFlash.getKeyFrame(timer), food.x.toFloat(), food.y.toFloat())
     }
 
 //    private fun drawText(batch: Batch) {

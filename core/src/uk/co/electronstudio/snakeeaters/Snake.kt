@@ -10,6 +10,7 @@ import uk.co.electronstudio.snakeeaters.Direction.NORTH
 import uk.co.electronstudio.snakeeaters.Direction.SOUTH
 import uk.co.electronstudio.snakeeaters.Direction.WEST
 import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.arena
+import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.makePixel
 import uk.me.fantastic.retro.Player
 
 enum class Direction(val vx: Int, val vy: Int) {
@@ -36,11 +37,10 @@ class Snake(
 
     init {
         body.add(startingPoint)
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(color)
-        pixmap.drawPixel(0, 0)
-        dot = Texture(pixmap)
+        dot = makePixel(color)
     }
+
+
 
 
     fun doDrawing(batch: Batch) {
@@ -50,12 +50,8 @@ class Snake(
     }
 
     fun move() {
-        println("test ${wrap(Point(-10,-10))}")
-
         val oldHead = body.first()
         val newHead = wrap(Point(oldHead.x + direction.vx, oldHead.y + direction.vy))
-
-        println("$newHead")
 
         // Insert next location at head
         body.add(0, newHead)
@@ -114,8 +110,8 @@ private val Rectangle.bottom: Int
 
 
 
-private val <A, B> Pair<A, B>.x: A
+val <A, B> Pair<A, B>.x: A
     get() = first
 
-private val <A, B> Pair<A, B>.y: B
+val <A, B> Pair<A, B>.y: B
     get() = second
