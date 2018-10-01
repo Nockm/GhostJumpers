@@ -18,13 +18,13 @@ import uk.me.fantastic.retro.screens.GameSession
 /* The God class */
 class SnakeGame(session: GameSession) :
         SimpleGame(session,
-                50f, 50f, font, font, false) {
+                50f, 50f, font, false) {
 
     override val MAX_FPS = 250f
     override val MIN_FPS = 20f
 
     companion object {
-        private val font = BitmapFont(Gdx.files.internal("addons/GhostJumpers/c64_low3_black.fnt")) // for drawing text
+        private val font = BitmapFont(Gdx.files.internal("addons/SnakeEaters/4pix.fnt")) // for drawing text
         var arena = Rectangle()
 
         fun makePixel(color: Color): Texture {
@@ -35,12 +35,12 @@ class SnakeGame(session: GameSession) :
         }
     }
 
-    val jumpSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/jump_jade.wav"))
-    val stunSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/fall_jade.wav"))
-    val bonusSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/bonus_jade.wav"))
-    val spawnSound = Gdx.audio.newSound(Gdx.files.internal("addons/GhostJumpers/hit_jade.wav"))
-    val music = CrossPlatformMusic.create(desktopFile = "addons/GhostJumpers/justin1.ogg", androidFile =
-    "addons/GhostJumpers/JustinLong.ogg", iOSFile = "addons/GhostJumpers/justin1.wav")
+    val jumpSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/jump_jade.wav"))
+    val stunSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/fall_jade.wav"))
+    val bonusSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/bonus_jade.wav"))
+    val spawnSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/hit_jade.wav"))
+    val music = CrossPlatformMusic.create(desktopFile = "addons/SnakeEaters/justin1.ogg", androidFile =
+    "addons/SnakeEaters/JustinLong.ogg", iOSFile = "addons/SnakeEaters/justin1.wav")
 
     val multiFlash = Animation<Texture>(1f / 30f,
             makePixel(Color.RED),
