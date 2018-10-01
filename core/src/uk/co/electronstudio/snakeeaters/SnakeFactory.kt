@@ -1,11 +1,10 @@
-package uk.co.electronstudio.ghostjumpers
+package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import uk.me.fantastic.retro.AbstractGameFactory
 import uk.me.fantastic.retro.App
 import uk.me.fantastic.retro.Game
-import uk.me.fantastic.retro.menu.MultiChoiceMenuItem
 import uk.me.fantastic.retro.screens.GameSession
 
 /*

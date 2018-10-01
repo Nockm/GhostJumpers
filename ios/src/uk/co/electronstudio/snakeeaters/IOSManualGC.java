@@ -1,4 +1,4 @@
-package uk.co.electronstudio.ghostjumpers;
+package uk.co.electronstudio.snakeeaters;
 
 import org.robovm.rt.GC;
 import uk.me.fantastic.retro.ManualGC;

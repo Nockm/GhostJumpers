@@ -1,10 +1,11 @@
-package uk.co.electronstudio.ghostjumpers
+package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import uk.me.fantastic.retro.Player
+import uk.co.electronstudio.snakeeaters.Direction.*
 
 enum class Direction(val vx: Int, val vy: Int) {
     NORTH(0, 1),
@@ -21,8 +22,23 @@ class Snake(
         var color: Color,
         var direction: Direction,
         startingPoint: Point,
-        var maxLength: Int = 5):Collidable
+        var maxLength: Int = 5)
 {
+
+    val body: Body = ArrayList<Point>()
+    var dot: Texture
+    val head: Point
+        get() = body.first()
+
+    init {
+        body.add(startingPoint)
+        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+        pixmap.setColor(color)
+        pixmap.drawPixel(0,0)
+        dot = Texture(pixmap)
+    }
+
+
     fun doDrawing(batch: Batch) {
         for (point in body) {
             batch.draw(dot, point.first.toFloat(), point.second.toFloat())
@@ -42,37 +58,28 @@ class Snake(
     }
 
     fun doInput() {
-        if (player.input.leftStick.x < -0.5) { direction = Direction.WEST } // ok
-        else if (player.input.leftStick.x > 0.5) { direction = Direction.EAST}
-        else if (player.input.leftStick.y < -0.5) { direction = Direction.NORTH }
-        else if (player.input.leftStick.y > 0.5) { direction = Direction.SOUTH }
+        player.input.leftStick.apply {
+            direction = when{
+                x < -0.5 -> WEST
+                x > 0.5 -> EAST
+                y > 0.5 -> SOUTH
+                y < -0.5 -> NORTH
+                else -> direction
+            }
+        }
     }
 
-    fun hasCollidedWith(snake2: Collidable): Boolean {
-        val myHead = body.first()
-
-        return snake2.testSnakeCollision()
-    }
-
-    override fun testSnakeCollision(snake: Snake){
-        body.forEach{
-            if(myHead.x == it.x && myHead.y == it.y) {
-                println("Dead stuff")
+    fun hasCollidedWith(other: Snake): Boolean {
+        other.body.forEach{
+            if(head.x == it.x && head.y == it.y) {
                 return true
             }
         }
         return false
     }
 
-    val body: Body = ArrayList<Point>()
-    var dot: Texture
-    init {
-        body.add(startingPoint)
-        val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-        pixmap.setColor(color)
-        pixmap.drawPixel(0,0)
-        dot = Texture(pixmap)
-    }
+
+
 }
 
 private val <A, B> Pair<A, B>.x: A

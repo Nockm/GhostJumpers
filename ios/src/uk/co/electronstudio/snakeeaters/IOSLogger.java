@@ -1,4 +1,4 @@
-package uk.co.electronstudio.ghostjumpers;
+package uk.co.electronstudio.snakeeaters;
 
 import uk.me.fantastic.retro.Logger;
 

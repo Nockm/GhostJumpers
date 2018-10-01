@@ -1,4 +1,4 @@
-package uk.co.electronstudio.ghostjumpers
+package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Rectangle
 import uk.me.fantastic.retro.App
 import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.SimpleGame
 import uk.me.fantastic.retro.screens.GameSession
+
 
 /* The God class */
 class SnakeGame(session: GameSession) :
@@ -35,15 +37,20 @@ class SnakeGame(session: GameSession) :
 
     var noOfPlayersInGameAlready = 0
     var timer = 0f
-    var delay = 0.02f
-
+    var delay = 0.4f
+    val arena = Rectangle(0f,0f,100f,100f)
     val snakes = ArrayList<Snake>()
-
     var food = getRandomPoint()
 
     init {
         font.data.markupEnabled = true
     }
+
+    private fun getRandomPoint() = Point(
+            MathUtils.random(arena.x.toInt()+10, arena.x.toInt()+arena.width.toInt()-10),
+            MathUtils.random(arena.y.toInt()+10, arena.y.toInt()+arena.height.toInt()-10)
+    )
+
 
     fun tick() {
         for (snake in snakes) {
@@ -63,7 +70,6 @@ class SnakeGame(session: GameSession) :
         }
 
         snakes.removeAll(deadSnakes)
-
         deadSnakes.clear()
     }
 
@@ -85,7 +91,6 @@ class SnakeGame(session: GameSession) :
         }
     }
 
-    private fun getRandomPoint() = Point(MathUtils.random(0, 100), MathUtils.random(0, 100))
 
     private fun doGameoverLogic() {
 //        if (timer > 1f && players.any { it.input.fire }) {
@@ -93,8 +98,6 @@ class SnakeGame(session: GameSession) :
     }
 
     override fun doDrawing(batch: Batch) {
-        println("It's doing it")
-
         for (snake in snakes) {
             snake.doDrawing(batch)
         }

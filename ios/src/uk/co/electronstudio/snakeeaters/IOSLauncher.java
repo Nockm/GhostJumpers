@@ -1,4 +1,4 @@
-package uk.co.electronstudio.ghostjumpers;
+package uk.co.electronstudio.snakeeaters;
 
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;

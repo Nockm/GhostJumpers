@@ -1,7 +1,6 @@
-package uk.co.electronstudio.ghostjumpers
+package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.utils.TimeUtils
-import java.lang.Thread.sleep
 
 class FPSLimiter(private val fps: Float) {
 
