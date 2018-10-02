@@ -19,14 +19,13 @@ import uk.me.fantastic.retro.screens.GameSession
 /* The God class */
 class SnakeGame(session: GameSession) :
         SimpleGame(session,
-                50f, 50f, font, false) {
-
-    override val MAX_FPS = 250f
-    override val MIN_FPS = 20f
+                88f, 50f, font, false) {
 
     companion object {
-        private val font = BitmapFont(Gdx.files.internal("addons/SnakeEaters/4pix.fnt")) // for drawing text
-        var arena = Rectangle()
+        private val font = BitmapFont(Gdx.files.internal("addons/SnakeEaters/4pix.fnt")).also {
+            it.data.markupEnabled = true
+        }
+        var arena = Rectangle(19f,0f,50f,50f)
 
         fun makePixel(color: Color): Texture {
             val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
@@ -58,8 +57,6 @@ class SnakeGame(session: GameSession) :
     var food : Point
 
     init {
-        font.data.markupEnabled = true
-        arena = Rectangle(0f,0f,width,height)
         food = getRandomPoint()
     }
 
