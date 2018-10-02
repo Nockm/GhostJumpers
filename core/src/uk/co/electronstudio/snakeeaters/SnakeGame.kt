@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import uk.me.fantastic.retro.App
+import uk.me.fantastic.retro.Player
 import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.SimpleGame
 import uk.me.fantastic.retro.screens.GameSession
@@ -50,7 +51,6 @@ class SnakeGame(session: GameSession) :
         it.playMode = Animation.PlayMode.LOOP
     }
 
-    var noOfPlayersInGameAlready = 0
     var timer = 0f
     var delay = 0.1f
 
@@ -94,12 +94,11 @@ class SnakeGame(session: GameSession) :
         deadSnakes.clear()
     }
 
-    override fun doLogic(deltaTime: Float) {
-        for (i in noOfPlayersInGameAlready until players.size) { // loop only when there is a new player(s) joined
-            noOfPlayersInGameAlready++
-            snakes.add(Snake(players[i], players[i].color2, Direction.SOUTH, getRandomPoint()))
-        }
+    override fun playerJoined(player: Player) {
+        snakes.add(Snake(player, player.color2, Direction.SOUTH, getRandomPoint()))
+    }
 
+    override fun doLogic(deltaTime: Float) {
         timer += deltaTime
 
         if (timer > delay) {
