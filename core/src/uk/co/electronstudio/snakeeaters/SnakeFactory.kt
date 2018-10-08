@@ -10,9 +10,9 @@ import uk.me.fantastic.retro.screens.GameSession
 /*
  * Used by RetroWar to create our main class
  */
-class SnakeFactory : AbstractGameFactory("Snake", null) {
+class SnakeFactory(path: String) : AbstractGameFactory("Snake", null, path) {
 
-    override val image by lazy { Texture(Gdx.files.internal("addons/GhostJumpers/pimpenemy.png")) }
+
 
     override val description = "A snake game. Eat the apples, grow as large as you can and trip up other players!"
 

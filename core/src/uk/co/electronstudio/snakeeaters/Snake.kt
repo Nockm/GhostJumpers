@@ -9,9 +9,8 @@ import uk.co.electronstudio.snakeeaters.Direction.EAST
 import uk.co.electronstudio.snakeeaters.Direction.NORTH
 import uk.co.electronstudio.snakeeaters.Direction.SOUTH
 import uk.co.electronstudio.snakeeaters.Direction.WEST
-import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.arena
-import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.makePixel
 import uk.me.fantastic.retro.Player
+
 
 enum class Direction(val vx: Int, val vy: Int) {
     NORTH(0, 1),

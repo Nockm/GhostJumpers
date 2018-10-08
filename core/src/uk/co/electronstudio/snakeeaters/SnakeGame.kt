@@ -15,32 +15,30 @@ import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.SimpleGame
 import uk.me.fantastic.retro.screens.GameSession
 
+fun makePixel(color: Color): Texture {
+    val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+    pixmap.setColor(color)
+    pixmap.drawPixel(0, 0)
+    return Texture(pixmap)
+}
+
+var arena = Rectangle(19f,0f,50f,50f)
 
 /* The God class */
-class SnakeGame(session: GameSession) :
+class SnakeGame(session: GameSession, pathPrefix: String = "") :
         SimpleGame(session,
-                88f, 50f, font, false) {
+                88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix+"4pix.fnt")), false) {
 
-    companion object {
-        private val font = BitmapFont(Gdx.files.internal("addons/SnakeEaters/4pix.fnt")).also {
-            it.data.markupEnabled = true
-        }
-        var arena = Rectangle(19f,0f,50f,50f)
 
-        fun makePixel(color: Color): Texture {
-            val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-            pixmap.setColor(color)
-            pixmap.drawPixel(0, 0)
-            return Texture(pixmap)
-        }
-    }
 
-    val jumpSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/jump_jade.wav"))
-    val stunSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/fall_jade.wav"))
-    val bonusSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/bonus_jade.wav"))
-    val spawnSound = Gdx.audio.newSound(Gdx.files.internal("addons/SnakeEaters/hit_jade.wav"))
-    val music = CrossPlatformMusic.create(desktopFile = "addons/SnakeEaters/justin1.ogg", androidFile =
-    "addons/SnakeEaters/JustinLong.ogg", iOSFile = "addons/SnakeEaters/justin1.wav")
+
+
+    val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"jump_jade.wav"))
+    val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"fall_jade.wav"))
+    val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"bonus_jade.wav"))
+    val spawnSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"hit_jade.wav"))
+    val music = CrossPlatformMusic.create(desktopFile = pathPrefix+"justin1.ogg", androidFile =
+    pathPrefix+"JustinLong.ogg", iOSFile = pathPrefix+"justin1.wav")
 
     val multiFlash = Animation<Texture>(1f / 30f,
             makePixel(Color.RED),

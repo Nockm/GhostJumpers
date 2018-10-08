@@ -14,7 +14,7 @@ public class DesktopLauncher {
         DesktopCallback callback = new DesktopCallback();
         LwjglApplicationConfiguration config = callback.getConfig();
         config.fullscreen = false;
-        App app = new SimpleApp(callback, "Snake", new SnakeFactory(), new SimpleLogger(), null, false, false);
+        App app = new SimpleApp(callback, "Snake", new SnakeFactory(""), new SimpleLogger(), null, false, false);
         new LwjglApplication(app, config);
     }
 }
