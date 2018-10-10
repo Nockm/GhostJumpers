@@ -57,7 +57,7 @@ jfx {
     appName = project.ext.appName
     verbose = true
 
-    addPackagerJar = true
+    addPackagerJar = false
     nativeReleaseVersion = "$version"
     // minimal requirement for jfxNative-task
     vendor = 'Vendor'

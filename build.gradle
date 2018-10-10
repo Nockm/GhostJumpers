@@ -4,12 +4,13 @@ buildscript {
         mavenCentral()
         mavenLocal()
         jcenter()
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.9' +
+            '.0-SNAPSHOT'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.3'
 
     }
@@ -18,7 +19,7 @@ buildscript {
 allprojects {
     apply plugin: "idea"
 
-    version = '0.0.0'
+    version = '1.0.0'
     ext {
 
         gdxVersion = '1.9.8'
@@ -68,27 +69,27 @@ project(":desktop") {
     }
 }
 
-
-project(":android") {
-    apply plugin: "android"
-    apply plugin: "kotlin-android"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":core")
-      //  compile fileTree('../../retrogame/core/build/libs')
-        compile name: 'retrowar-common', version: '+'
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    }
-}
+//
+//project(":android") {
+//    apply plugin: "android"
+//    apply plugin: "kotlin-android"
+//
+//    configurations { natives }
+//
+//    dependencies {
+//        compile project(":core")
+//      //  compile fileTree('../../retrogame/core/build/libs')
+//        compile name: 'retrowar-common', version: '+'
+//        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+//        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+//    }
+//}
 
 project(":core") {
     apply plugin: "kotlin"
