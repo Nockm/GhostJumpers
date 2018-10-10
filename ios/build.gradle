@@ -20,7 +20,7 @@ sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "uk.co.electronstudio.ghostjumpers.IOSLauncher"
+	mainClassName = "uk.co.electronstudio.snakeeaters.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build

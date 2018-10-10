@@ -14,10 +14,8 @@ import  uk.me.fantastic.retro.utils.AndroidLogger
 class Launcher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
-
-
-
-        val app = SimpleApp(EmptyCallback(), "Ghost Jumpers",  SnakeFactory::class.java, AndroidLogger(BuildConfig.VERSION_NAME,
+        val app = SimpleApp(EmptyCallback(), "Snake Eaters",  SnakeFactory::class.java, AndroidLogger(BuildConfig
+                .VERSION_NAME,
                ""))
         super.onCreate(savedInstanceState)
         val config = AndroidApplicationConfiguration()

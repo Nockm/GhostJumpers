@@ -73,7 +73,7 @@ class Snake(
         for (point in body) {
             batch.draw(if(flash) dot3 else dot1, point.x.toFloat(), point.y.toFloat())
         }
-        batch.draw(dot2, head.x.toFloat(), head.y.toFloat())
+        batch.draw(dot1, head.x.toFloat(), head.y.toFloat())
         flash=false
     }
 

@@ -18,10 +18,10 @@ class SnakeFactory(path: String) : AbstractGameFactory("Snake", listOf("snake1.p
 
     val suddenDeath = BinMenuItem("Sudden Death", false)
     val maxFoods = NumberMenuItem("Maximum foods on screen", 10, 0, 20)
-    val minFoods = NumberMenuItem("Minimum foods on screen", 10, 0, 20)
-    val foodGoal = NumberMenuItem("Food required to win", 10, 0, 50)
-    val speed = NumberMenuItem("Snake speed", 1, 0, 10)
-    val foodValue = NumberMenuItem("Value of each food eaten", 1, 1, 30)
+    val minFoods = NumberMenuItem("Minimum foods on screen", 0, 0, 20)
+    val foodGoal = NumberMenuItem("Food required to win", 20, 0, 50)
+    val speed = NumberMenuItem("Snake speed", 2, 0, 10)
+    val foodValue = NumberMenuItem("Value of each food eaten", 2, 1, 30)
 
 
     override val options = listOf(
