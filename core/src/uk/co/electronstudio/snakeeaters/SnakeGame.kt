@@ -11,8 +11,8 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
 import uk.me.fantastic.retro.App
 import uk.me.fantastic.retro.Player
-import uk.me.fantastic.retro.Prefs
 import uk.me.fantastic.retro.SimpleGame
+import uk.me.fantastic.retro.roundDown
 import uk.me.fantastic.retro.screens.GameSession
 
 fun makePixel(color: Color): Texture {
@@ -22,23 +22,31 @@ fun makePixel(color: Color): Texture {
     return Texture(pixmap)
 }
 
-var arena = Rectangle(19f,0f,50f,50f)
+
 
 /* The God class */
-class SnakeGame(session: GameSession, pathPrefix: String = "") :
+class SnakeGame(session: GameSession,
+                pathPrefix: String = "",
+                val suddenDeath: Boolean = false,
+                val numberOfFoods: Int = 10,
+                val speed: Float = 0.1f,
+                val foodValue: Int = 2,
+                val levelName: String = "snake1.png") :
         SimpleGame(session,
-                88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix+"4pix.fnt")), false) {
+                88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
 
 
+    val level = Texture(pathPrefix + levelName)
+    val levelPixmap = Pixmap(Gdx.files.internal(pathPrefix + levelName))
+    var arena = Rectangle(((width-level.width)/2).roundDown(), 0f, level.width.toFloat(), level.height.toFloat())
 
 
-
-    val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"jump_jade.wav"))
-    val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"fall_jade.wav"))
-    val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"bonus_jade.wav"))
-    val spawnSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix+"hit_jade.wav"))
-    val music = CrossPlatformMusic.create(desktopFile = pathPrefix+"justin1.ogg", androidFile =
-    pathPrefix+"JustinLong.ogg", iOSFile = pathPrefix+"justin1.wav")
+    val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "jump_jade.wav"))
+    val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "fall_jade.wav"))
+    val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "bonus_jade.wav"))
+    val spawnSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "hit_jade.wav"))
+    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "justin1.ogg", androidFile =
+    pathPrefix + "JustinLong.ogg", iOSFile = pathPrefix + "justin1.wav")
 
     val multiFlash = Animation<Texture>(1f / 30f,
             makePixel(Color.RED),
@@ -49,48 +57,72 @@ class SnakeGame(session: GameSession, pathPrefix: String = "") :
     }
 
     var timer = 0f
-    var delay = 0.1f
+    var delay = 1f/60f/speed
 
     val snakes = ArrayList<Snake>()
-    var food : Point
+    val foods = MutableList(numberOfFoods) { getRandomPoint() }
 
-    init {
-        food = getRandomPoint()
-    }
 
     private fun getRandomPoint() = Point(
-            MathUtils.random(arena.x.toInt()+10, arena.x.toInt()+arena.width.toInt()-10),
-            MathUtils.random(arena.y.toInt()+10, arena.y.toInt()+arena.height.toInt()-10)
+            MathUtils.random(arena.x.toInt() + 1, arena.x.toInt() + arena.width.toInt() - 2),
+            MathUtils.random(arena.y.toInt() + 1, arena.y.toInt() + arena.height.toInt() - 2)
     )
 
 
     fun tick() {
+        spawnSound.play()
         for (snake in snakes) {
             snake.move()
         }
 
         val deadSnakes = ArrayList<Snake>()
+        val deadFoods = ArrayList<Point>()
 
         for (snake1 in snakes) {
-            if (snake1.hasCollidedWith(food)){
-                food = getRandomPoint()
-                snake1.maxLength++
+            for (food in foods) {
+                if (snake1.hasCollidedWith(food)) {
+                    bonusSound.play()
+                    deadFoods.add(food)
+                    snake1.maxLength += foodValue
+                }
             }
             for (snake2 in snakes) {
-                if (snake1 != snake2) {
-                    if (snake1.hasCollidedWith(snake2)) {
+                if (snake1.hasCollidedWith(snake2)) {
+                    snake1.doCollision()
+                    if (snake1.maxLength < 1 || suddenDeath) {
                         deadSnakes.add(snake1)
                     }
                 }
             }
+            val c = Color(levelPixmap.getPixel(snake1.head.x-arena.x.toInt(), snake1.head.y - arena.y.toInt()))
+            if(c.a != 0f){
+                snake1.doCollision()
+                if (snake1.maxLength < 1 || suddenDeath) {
+                    deadSnakes.add(snake1)
+                }
+            }
+
         }
+
+
+        for (food in deadFoods) {
+            foods.add(getRandomPoint())
+        }
+        foods.removeAll(deadFoods)
+        deadFoods.clear()
+
 
         snakes.removeAll(deadSnakes)
         deadSnakes.clear()
+
+        if(snakes.isEmpty()){
+            gameover()
+        }
+
     }
 
     override fun playerJoined(player: Player) {
-        snakes.add(Snake(player, player.color2, Direction.SOUTH, getRandomPoint()))
+        snakes.add(Snake(this, player, Direction.SOUTH, getRandomPoint()))
     }
 
     override fun doLogic(deltaTime: Float) {
@@ -113,10 +145,18 @@ class SnakeGame(session: GameSession, pathPrefix: String = "") :
     }
 
     override fun doDrawing(batch: Batch) {
+        batch.draw(level, arena.x, arena.y)
+        var y = height
         for (snake in snakes) {
             snake.doDrawing(batch)
+            font.color = snake.player.color2
+            font.draw(batch, snake.maxLength.toString(), 0f, y)
+            y -= 8f
         }
-        batch.draw(multiFlash.getKeyFrame(timer), food.x.toFloat(), food.y.toFloat())
+        for (food in foods) {
+            batch.draw(multiFlash.getKeyFrame(timer), food.x.toFloat(), food.y.toFloat())
+        }
+
     }
 
 //    private fun drawText(batch: Batch) {
@@ -144,7 +184,7 @@ class SnakeGame(session: GameSession, pathPrefix: String = "") :
 //    }
 
     override fun show() {
-        if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
+        // if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
         App.app.manualGC?.disable()
     }
 

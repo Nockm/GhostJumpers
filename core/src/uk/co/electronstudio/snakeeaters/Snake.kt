@@ -19,50 +19,17 @@ enum class Direction(val vx: Int, val vy: Int) {
     EAST(1, 0),
 }
 
-typealias Point = Pair<Int, Int>
-typealias Body = MutableList<Point>
-
-class Snake(
-        val player: Player,
-        var color: Color,
-        var direction: Direction,
-        startingPoint: Point,
-        var maxLength: Int = 5) {
-
-    val body: Body = ArrayList<Point>()
-    var dot: Texture
-    val head: Point
-        get() = body.first()
-
-    init {
-        body.add(startingPoint)
-        dot = makePixel(color)
+class Point(val x: Int, val y: Int) {
+    operator fun plus(direction: Direction): Point {
+        return Point(x+direction.vx, y+direction.vy)
     }
 
-
-
-
-    fun doDrawing(batch: Batch) {
-        for (point in body) {
-            batch.draw(dot, point.first.toFloat(), point.second.toFloat())
-        }
+    operator fun minus(direction: Direction): Point {
+        return Point(x-direction.vx, y-direction.vy)
     }
 
-    fun move() {
-        val oldHead = body.first()
-        val newHead = wrap(Point(oldHead.x + direction.vx, oldHead.y + direction.vy))
-
-        // Insert next location at head
-        body.add(0, newHead)
-
-        if (body.size > maxLength) {
-            body.removeAt(body.lastIndex)
-        }
-    }
-
-    private fun wrap(point: Point): Point {
-        return point.run {
-            Point(
+    fun wrap(arena: Rectangle): Point {
+        return Point(
                     when {
                         x < arena.left -> arena.right-1
                         x > arena.right-1 -> arena.left
@@ -74,25 +41,81 @@ class Snake(
                         else -> y
                     })
         }
+
+}
+typealias Body = MutableList<Point>
+
+class Snake(
+        val game: SnakeGame,
+        val player: Player,
+        var direction: Direction,
+        startingPoint: Point,
+        var maxLength: Int = 10) {
+
+    val body: Body = ArrayList<Point>()
+    var dot1: Texture
+    val dot2: Texture
+    val dot3: Texture
+    var head: Point = startingPoint
+    var flash = false
+
+    init {
+        body.add(startingPoint)
+        dot1 = makePixel(player.color2)
+        dot2 = makePixel(player.color)
+        dot3 = makePixel(Color.WHITE)
     }
+
+
+
+
+    fun doDrawing(batch: Batch) {
+        for (point in body) {
+            batch.draw(if(flash) dot3 else dot1, point.x.toFloat(), point.y.toFloat())
+        }
+        batch.draw(dot2, head.x.toFloat(), head.y.toFloat())
+        flash=false
+    }
+
+    fun move() {
+        body.add(0, head)
+        head += direction
+        head = head.wrap(game.arena)
+
+        while (body.size > maxLength) {
+            body.removeAt(body.lastIndex)
+        }
+    }
+
+
 
     fun doInput() {
         player.input.leftStick.apply {
             direction = when {
-                x < -0.5 -> WEST
-                x > 0.5 -> EAST
-                y > 0.5 -> SOUTH
-                y < -0.5 -> NORTH
+                x < -0.3 -> WEST
+                x > 0.3 -> EAST
+                y > 0.3 -> SOUTH
+                y < -0.3 -> NORTH
                 else -> direction
             }
         }
     }
 
-    fun hasCollidedWith(other: Snake) = other.body.any { hasCollidedWith(it) }
+    fun hasCollidedWith(other: Snake) =  other.body.any { hasCollidedWith(it) }
+
+
     fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
+    fun doCollision() {
+        game.stunSound.play()
+        body.removeAt(0)
+        head-=direction
+        maxLength-=2
+        flash=true
+    }
 
 
 }
+
 
 private val Rectangle.left: Int
     get() = x.toInt()
@@ -107,10 +130,3 @@ private val Rectangle.bottom: Int
     get() = y.toInt()
 
 
-
-
-val <A, B> Pair<A, B>.x: A
-    get() = first
-
-val <A, B> Pair<A, B>.y: B
-    get() = second
