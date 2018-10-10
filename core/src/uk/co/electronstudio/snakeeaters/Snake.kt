@@ -92,10 +92,10 @@ class Snake(
     fun doInput() {
         player.input.leftStick.apply {
             direction = when {
-                x < -0.3 -> WEST
-                x > 0.3 -> EAST
-                y > 0.3 -> SOUTH
-                y < -0.3 -> NORTH
+                x < -0.3 -> if(direction==EAST) EAST else WEST
+                x > 0.3 -> if(direction==WEST) WEST else EAST
+                y > 0.3 -> if(direction==NORTH) NORTH else SOUTH
+                y < -0.3 -> if(direction==SOUTH) SOUTH else NORTH
                 else -> direction
             }
         }

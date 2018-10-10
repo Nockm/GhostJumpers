@@ -28,9 +28,11 @@ fun makePixel(color: Color): Texture {
 class SnakeGame(session: GameSession,
                 pathPrefix: String = "",
                 val suddenDeath: Boolean = false,
-                val numberOfFoods: Int = 10,
+                val maxFoods: Int =2,
+                val minFoods: Int = 1,
+                val foodGoal: Int = 5,
                 val speed: Float = 0.1f,
-                val foodValue: Int = 2,
+                val foodValue: Int = 1,
                 val levelName: String = "snake1.png") :
         SimpleGame(session,
                 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
@@ -60,7 +62,7 @@ class SnakeGame(session: GameSession,
     var delay = 1f/60f/speed
 
     val snakes = ArrayList<Snake>()
-    val foods = MutableList(numberOfFoods) { getRandomPoint() }
+    val foods = MutableList(maxFoods) { getRandomPoint() }
 
 
     private fun getRandomPoint() = Point(
@@ -102,13 +104,18 @@ class SnakeGame(session: GameSession,
                 }
             }
 
+            if(snake1.maxLength>foodGoal){
+                TODO("LEVEL COMPLETE")
+            }
+
         }
 
 
-        for (food in deadFoods) {
+
+        foods.removeAll(deadFoods)
+        while(foods.size<minFoods){
             foods.add(getRandomPoint())
         }
-        foods.removeAll(deadFoods)
         deadFoods.clear()
 
 
@@ -122,7 +129,7 @@ class SnakeGame(session: GameSession,
     }
 
     override fun playerJoined(player: Player) {
-        snakes.add(Snake(this, player, Direction.SOUTH, getRandomPoint()))
+        snakes.add(Snake(this, player, Direction.SOUTH, getRandomPoint(), 2))
     }
 
     override fun doLogic(deltaTime: Float) {
