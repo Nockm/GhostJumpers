@@ -43,6 +43,7 @@ allprojects {
         maven { url "http://clojars.org/repo/"}
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url  "https://dl.bintray.com/electronstudio/retrowar/" }
     }
 
     repositories {
@@ -98,7 +99,8 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         //compile fileTree('../../retrogame/core/build/libs')
-        compile name: 'retrowar-common', version: '+'
+        compile "uk.co.electronstudio.retrowar:retrowar-common:0.15.+"
+      //  compile name: 'retrowar-common', version: '+'
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "net.onedaybeard.artemis:artemis-odb:2.1.0"
@@ -107,7 +109,7 @@ project(":core") {
 
     jar {
         manifest {
-            attributes("RetroWar-Version": "0.14",
+            attributes("RetroWar-Version": "0.15.0",
                     "Factory-Class": "uk.co.electronstudio.snakeeaters.SnakeFactory"
             )
         }

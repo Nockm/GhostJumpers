@@ -9,11 +9,11 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Rectangle
-import uk.me.fantastic.retro.App
-import uk.me.fantastic.retro.Player
-import uk.me.fantastic.retro.SimpleGame
-import uk.me.fantastic.retro.roundDown
-import uk.me.fantastic.retro.screens.GameSession
+import uk.co.electronstudio.retrowar.App
+import uk.co.electronstudio.retrowar.Player
+import uk.co.electronstudio.retrowar.SimpleGame
+import uk.co.electronstudio.retrowar.roundDown
+import uk.co.electronstudio.retrowar.screens.GameSession
 
 fun makePixel(color: Color): Texture {
     val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)

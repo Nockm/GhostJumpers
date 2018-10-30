@@ -9,7 +9,7 @@ import uk.co.electronstudio.snakeeaters.Direction.EAST
 import uk.co.electronstudio.snakeeaters.Direction.NORTH
 import uk.co.electronstudio.snakeeaters.Direction.SOUTH
 import uk.co.electronstudio.snakeeaters.Direction.WEST
-import uk.me.fantastic.retro.Player
+import uk.co.electronstudio.retrowar.Player
 
 
 enum class Direction(val vx: Int, val vy: Int) {

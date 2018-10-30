@@ -4,11 +4,11 @@ package uk.co.electronstudio.snakeeaters
 import android.os.Bundle
 import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
-import uk.me.fantastic.retro.EmptyCallback
-import uk.me.fantastic.retro.SimpleApp
-import uk.me.fantastic.retro.utils.DesktopCallback
-import uk.me.fantastic.retro.utils.SimpleLogger
-import  uk.me.fantastic.retro.utils.AndroidLogger
+import uk.co.electronstudio.retrowar.EmptyCallback
+import uk.co.electronstudio.retrowar.SimpleApp
+import uk.co.electronstudio.retrowar.utils.DesktopCallback
+import uk.co.electronstudio.retrowar.utils.SimpleLogger
+import  uk.co.electronstudio.retrowar.utils.AndroidLogger
 
 
 class Launcher : AndroidApplication() {

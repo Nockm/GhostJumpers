@@ -1,14 +1,14 @@
 package uk.co.electronstudio.snakeeaters
 
-import uk.me.fantastic.retro.AbstractGameFactory
-import uk.me.fantastic.retro.App
-import uk.me.fantastic.retro.Game
-import uk.me.fantastic.retro.Prefs
-import uk.me.fantastic.retro.menu.BinMenuItem
-import uk.me.fantastic.retro.menu.BinPrefMenuItem
-import uk.me.fantastic.retro.menu.MultiChoiceMenuItem
-import uk.me.fantastic.retro.menu.NumberMenuItem
-import uk.me.fantastic.retro.screens.GameSession
+import uk.co.electronstudio.retrowar.AbstractGameFactory
+import uk.co.electronstudio.retrowar.App
+import uk.co.electronstudio.retrowar.Game
+import uk.co.electronstudio.retrowar.Prefs
+import uk.co.electronstudio.retrowar.menu.BinMenuItem
+import uk.co.electronstudio.retrowar.menu.BinPrefMenuItem
+import uk.co.electronstudio.retrowar.menu.MultiChoiceMenuItem
+import uk.co.electronstudio.retrowar.menu.NumberMenuItem
+import uk.co.electronstudio.retrowar.screens.GameSession
 
 /*
  * Used by RetroWar to create our main class

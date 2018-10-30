@@ -2,7 +2,8 @@ package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import uk.me.fantastic.retro.Prefs
+import uk.co.electronstudio.retrowar.Prefs
+
 
 
 abstract class CrossPlatformMusic {

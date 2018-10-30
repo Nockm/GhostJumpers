@@ -3,17 +3,17 @@ package com.mygdx.game.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import uk.co.electronstudio.snakeeaters.SnakeFactory;
-import uk.me.fantastic.retro.App;
-import uk.me.fantastic.retro.SimpleApp;
-import uk.me.fantastic.retro.utils.DesktopCallback;
-import uk.me.fantastic.retro.utils.SimpleLogger;
+import uk.co.electronstudio.retrowar.App;
+import uk.co.electronstudio.retrowar.SimpleApp;
+import uk.co.electronstudio.retrowar.utils.DesktopCallback;
+import uk.co.electronstudio.retrowar.utils.SimpleLogger;
 
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
         DesktopCallback callback = new DesktopCallback();
         LwjglApplicationConfiguration config = callback.getConfig();
-        config.fullscreen = true;
+       // config.fullscreen = true;
         App app = new SimpleApp(callback, "Snake", SnakeFactory.class, new SimpleLogger(), null, false, true);
         new LwjglApplication(app, config);
     }

@@ -5,8 +5,8 @@ import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import uk.me.fantastic.retro.EmptyCallback;
-import uk.me.fantastic.retro.SimpleApp;
+import uk.co.electronstudio.retrowar.EmptyCallback;
+import uk.co.electronstudio.retrowar.SimpleApp;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
