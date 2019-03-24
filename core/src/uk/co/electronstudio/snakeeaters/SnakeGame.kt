@@ -7,48 +7,39 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.utils.Align
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.SimpleGame
-import uk.co.electronstudio.retrowar.roundDown
 import uk.co.electronstudio.retrowar.screens.GameSession
-
-fun makePixel(color: Color): Texture {
-    val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-    pixmap.setColor(color)
-    pixmap.drawPixel(0, 0)
-    return Texture(pixmap)
-}
-
-
 
 /* The God class */
 class SnakeGame(session: GameSession,
-                pathPrefix: String = "",
+                val pathPrefix: String = "",
                 val suddenDeath: Boolean = false,
                 val maxFoods: Int =2,
                 val minFoods: Int = 1,
-                val foodGoal: Int = 5,
-                val speed: Float = 0.1f,
+                val foodGoal: Int = 1,
+                var speed: Float = 0.1f,
+                val speedup: Boolean = false,
                 val foodValue: Int = 1,
-                val levelName: String = "snake1.png") :
+                val levelNames: List<String>,
+                val levelIndex: Int = 0) :
         SimpleGame(session,
                 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
 
-
-    val level = Texture(pathPrefix + levelName)
-    val levelPixmap = Pixmap(Gdx.files.internal(pathPrefix + levelName))
-    var arena = Rectangle(((width-level.width)/2).roundDown(), 0f, level.width.toFloat(), level.height.toFloat())
-
+    val levelName = levelNames[levelIndex]
+    var arena = Arena(this, Gdx.files.internal(pathPrefix + "levels/"+levelName))
+    var winner: Snake? = null
 
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "jump_jade.wav"))
     val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "fall_jade.wav"))
     val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "bonus_jade.wav"))
     val spawnSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "hit_jade.wav"))
-    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "justin1.ogg", androidFile =
-    pathPrefix + "JustinLong.ogg", iOSFile = pathPrefix + "justin1.wav")
+//    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "justin1.ogg", androidFile =
+//    pathPrefix + "JustinLong.ogg", iOSFile = pathPrefix + "justin1.wav")
+
+    var levelComplete = false
 
     val multiFlash = Animation<Texture>(1f / 30f,
             makePixel(Color.RED),
@@ -59,17 +50,11 @@ class SnakeGame(session: GameSession,
     }
 
     var timer = 0f
-    var delay = 1f/60f/speed
+    var tickTimer = 0f
+    fun delay() = 1f/60f/speed
 
     val snakes = ArrayList<Snake>()
-    val foods = MutableList(maxFoods) { getRandomPoint() }
-
-
-    private fun getRandomPoint() = Point(
-            MathUtils.random(arena.x.toInt() + 1, arena.x.toInt() + arena.width.toInt() - 2),
-            MathUtils.random(arena.y.toInt() + 1, arena.y.toInt() + arena.height.toInt() - 2)
-    )
-
+    val foods = MutableList(maxFoods) { arena.getRandomEmptyPoint() }
 
     fun tick() {
         spawnSound.play()
@@ -96,8 +81,9 @@ class SnakeGame(session: GameSession,
                     }
                 }
             }
-            val c = Color(levelPixmap.getPixel(snake1.head.x-arena.x.toInt(), snake1.head.y - arena.y.toInt()))
-            if(c.a != 0f){
+
+
+            if(!arena.emptyCellAt(snake1.head)){
                 snake1.doCollision()
                 if (snake1.maxLength < 1 || suddenDeath) {
                     deadSnakes.add(snake1)
@@ -105,38 +91,58 @@ class SnakeGame(session: GameSession,
             }
 
             if(snake1.maxLength>foodGoal){
-                TODO("LEVEL COMPLETE")
+                levelComplete=true
+                winner=snake1
             }
 
         }
 
-
-
         foods.removeAll(deadFoods)
         while(foods.size<minFoods){
-            foods.add(getRandomPoint())
+            foods.add(arena.getRandomEmptyPoint())
         }
         deadFoods.clear()
-
-
         snakes.removeAll(deadSnakes)
         deadSnakes.clear()
-
         if(snakes.isEmpty()){
             gameover()
         }
-
+        if(speedup){
+            speed+=0.001f
+        }
     }
 
+
+
     override fun playerJoined(player: Player) {
-        snakes.add(Snake(this, player, Direction.SOUTH, getRandomPoint(), 2))
+        snakes.add(Snake(this, player, Direction.SOUTH, arena.getRandomEmptyPoint(), 2))
     }
 
     override fun doLogic(deltaTime: Float) {
         timer += deltaTime
+        tickTimer += deltaTime
+        if(levelComplete) {
+            if(tickTimer>10f){
+                if(levelIndex<levelNames.lastIndex) {
+                    session.nextGame = SnakeGame(session,
+                        pathPrefix,
+                        suddenDeath,
+                        maxFoods,
+                        minFoods,
+                        foodGoal,
+                        speed,
+                        speedup,
+                        foodValue,
+                        levelNames,
+                        levelIndex + 1)
+                }
+                gameover()
+            }
+            return
+        }
 
-        if (timer > delay) {
-            timer = 0f
+        if (tickTimer > delay()) {
+            tickTimer = 0f
             tick()
         }
 
@@ -146,13 +152,10 @@ class SnakeGame(session: GameSession,
     }
 
 
-    private fun doGameoverLogic() {
-//        if (timer > 1f && players.any { it.input.fire }) {
-//        }
-    }
+
 
     override fun doDrawing(batch: Batch) {
-        batch.draw(level, arena.x, arena.y)
+        arena.doDrawing(batch)
         var y = height
         for (snake in snakes) {
             snake.doDrawing(batch)
@@ -161,42 +164,26 @@ class SnakeGame(session: GameSession,
             y -= 8f
         }
         for (food in foods) {
-            batch.draw(multiFlash.getKeyFrame(timer), food.x.toFloat(), food.y.toFloat())
+            batch.draw(multiFlash.getKeyFrame(tickTimer), food.x.toFloat()+arena.xOffset, food.y.toFloat()+arena.yOffset)
         }
+        winner?.let {
+            font.color = it.player.color2
+            font.draw(batch, "Winner\n\n${it.player.name}", 0f, height/2f, width, Align.center, false)
+        }
+
+
 
     }
 
-//    private fun drawText(batch: Batch) {
-//        font.color = if (timeleft() > 21) Color.WHITE else redFlash.getKeyFrame(timer, true)
-//        font.draw(batch, "${timeleft()}", 150f, 240f)
-//        font.color = Color.WHITE
-//        font.draw(batch, "L${friendlyLevelNumber()}", 0f, 240f)
-//        font.draw(batch, "$scoreDisplay PTS", 0f, 240f, 320f, Align.right, false)
-//    }
-
-//        val s = "\n\n\nLEVEL ${friendlyLevelNumber()}\n\n${endOfLevelMessage}\n" +
-//                scoreTable() +
-//                "\n\n\nTOTAL SCORE ${players.sumBy { it.score }}"
-//
-//        font.draw(batch, s, 0f, 240f, 320f, Align.center, false)
-//    }
-
-//    fun scoreTable() = players.joinToString("") {
-//        (if (it == winner) "[${multiFlash.getKeyFrame(timer, true)}]" else "") +
-//                "\n\n${it.name} ${it.score}[]"
-//    }
-
-//    private fun timeleft(): Int {
-//        return (timeLimit - timer).toInt()
-//    }
 
     override fun show() {
         // if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
         App.app.manualGC?.disable()
+        session.nextGame=null
     }
 
     override fun hide() {
-        music.stop()
+        //music.stop()
         App.app.manualGC?.enable()
         App.app.manualGC?.doGC()
     }
@@ -206,6 +193,17 @@ class SnakeGame(session: GameSession,
         stunSound.dispose()
         bonusSound.dispose()
         spawnSound.dispose()
-        music.dispose()
+       // music.dispose()
     }
 }
+
+fun makePixel(color: Color): Texture {
+    val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+    pixmap.setColor(color)
+    pixmap.drawPixel(0, 0)
+    val texture = Texture(pixmap)
+    texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest)
+    return Texture(pixmap)
+}
+
+

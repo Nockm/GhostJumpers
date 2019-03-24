@@ -13,44 +13,14 @@ import uk.co.electronstudio.retrowar.Player
 
 
 enum class Direction(val vx: Int, val vy: Int) {
-    NORTH(0, 1),
-    SOUTH(0, -1),
-    WEST(-1, 0),
-    EAST(1, 0),
+    NORTH(0, 1), SOUTH(0, -1), WEST(-1, 0), EAST(1, 0),
 }
 
-class Point(val x: Int, val y: Int) {
-    operator fun plus(direction: Direction): Point {
-        return Point(x+direction.vx, y+direction.vy)
-    }
 
-    operator fun minus(direction: Direction): Point {
-        return Point(x-direction.vx, y-direction.vy)
-    }
-
-    fun wrap(arena: Rectangle): Point {
-        return Point(
-                    when {
-                        x < arena.left -> arena.right-1
-                        x > arena.right-1 -> arena.left
-                        else -> x
-                    },
-                    when {
-                        y < arena.bottom -> arena.top-1
-                        y > arena.top-1 -> arena.bottom
-                        else -> y
-                    })
-        }
-
-}
 typealias Body = MutableList<Point>
 
-class Snake(
-        val game: SnakeGame,
-        val player: Player,
-        var direction: Direction,
-        startingPoint: Point,
-        var maxLength: Int = 10) {
+class Snake(val game: SnakeGame, val player: Player, var direction: Direction, startingPoint: Point,
+            var maxLength: Int = 10) {
 
     val body: Body = ArrayList<Point>()
     var dot1: Texture
@@ -67,14 +37,12 @@ class Snake(
     }
 
 
-
-
     fun doDrawing(batch: Batch) {
         for (point in body) {
-            batch.draw(if(flash) dot3 else dot1, point.x.toFloat(), point.y.toFloat())
+            batch.draw(if (flash) dot3 else dot1, point.x.toFloat()+game.arena.xOffset, point.y.toFloat()+game.arena.yOffset)
         }
-        batch.draw(dot1, head.x.toFloat(), head.y.toFloat())
-        flash=false
+        batch.draw(dot1, head.x.toFloat()+game.arena.xOffset, head.y.toFloat()+game.arena.yOffset)
+        flash = false
     }
 
     fun move() {
@@ -88,29 +56,29 @@ class Snake(
     }
 
 
-
     fun doInput() {
         player.input.leftStick.apply {
             direction = when {
-                x < -0.3 -> if(direction==EAST) EAST else WEST
-                x > 0.3 -> if(direction==WEST) WEST else EAST
-                y > 0.3 -> if(direction==NORTH) NORTH else SOUTH
-                y < -0.3 -> if(direction==SOUTH) SOUTH else NORTH
+                x < -0.3 -> if (direction == EAST) EAST else WEST
+                x > 0.3 -> if (direction == WEST) WEST else EAST
+                y > 0.3 -> if (direction == NORTH) NORTH else SOUTH
+                y < -0.3 -> if (direction == SOUTH) SOUTH else NORTH
                 else -> direction
             }
         }
     }
 
-    fun hasCollidedWith(other: Snake) =  other.body.any { hasCollidedWith(it) }
+    fun hasCollidedWith(other: Snake) = other.body.any { hasCollidedWith(it) }
 
 
     fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
     fun doCollision() {
+        if(game.timer<4f) return // invulnerable at start
         game.stunSound.play()
         body.removeAt(0)
-        head-=direction
-        maxLength-=2
-        flash=true
+        head -= direction
+        maxLength -= 2
+        flash = true
     }
 
 
@@ -124,7 +92,7 @@ private val Rectangle.right: Int
     get() = (x + width).toInt()
 
 private val Rectangle.top: Int
-    get() = (y+height).toInt()
+    get() = (y + height).toInt()
 
 private val Rectangle.bottom: Int
     get() = y.toInt()
