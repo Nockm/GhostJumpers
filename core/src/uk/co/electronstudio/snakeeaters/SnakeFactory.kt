@@ -15,7 +15,7 @@ import java.io.File
  * Used by RetroWar to create our main class
  */
 class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelNames(path+"levels"), path) {
-
+    override val description = "A snake game. Eat the apples, grow as large as you can and trip up other players!"
 
     val suddenDeath = BinMenuItem("Sudden Death: ", false)
     val maxFoods = NumberMenuItem("Maximum foods on screen: ", 5, 0, 20)
@@ -25,13 +25,9 @@ class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelNames
     val foodValue = NumberMenuItem("Value of each food eaten: ", 2, 1, 30)
     val speedup = BinMenuItem("Speed increase: ", true)
 
-
     override val options = listOf(
            suddenDeath, maxFoods, minFoods, foodGoal, speed, foodValue, speedup
     )
-
-
-    override val description = "A snake game. Eat the apples, grow as large as you can and trip up other players!"
 
     override fun create(session: GameSession): Game {
         App.app.configureSessionWithPreSelectedInputDevice(session)

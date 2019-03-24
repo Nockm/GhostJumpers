@@ -1,10 +1,8 @@
 package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.math.Rectangle
 import uk.co.electronstudio.snakeeaters.Direction.EAST
 import uk.co.electronstudio.snakeeaters.Direction.NORTH
 import uk.co.electronstudio.snakeeaters.Direction.SOUTH
@@ -16,32 +14,22 @@ enum class Direction(val vx: Int, val vy: Int) {
     NORTH(0, 1), SOUTH(0, -1), WEST(-1, 0), EAST(1, 0),
 }
 
-
 typealias Body = MutableList<Point>
 
 class Snake(val game: SnakeGame, val player: Player, var direction: Direction, startingPoint: Point,
             var maxLength: Int = 10) {
-
-    val body: Body = ArrayList<Point>()
-    var dot1: Texture
-    val dot2: Texture
-    val dot3: Texture
+    private val body: Body = arrayListOf(startingPoint)
+    private val dot1: Texture = makePixel(player.color2)
+    private val dot2: Texture = makePixel(player.color)
+    private val dot3: Texture = makePixel(Color.WHITE)
     var head: Point = startingPoint
-    var flash = false
-
-    init {
-        body.add(startingPoint)
-        dot1 = makePixel(player.color2)
-        dot2 = makePixel(player.color)
-        dot3 = makePixel(Color.WHITE)
-    }
-
+    private var flash = false
 
     fun doDrawing(batch: Batch) {
         for (point in body) {
             batch.draw(if (flash) dot3 else dot1, point.x.toFloat()+game.arena.xOffset, point.y.toFloat()+game.arena.yOffset)
         }
-        batch.draw(dot1, head.x.toFloat()+game.arena.xOffset, head.y.toFloat()+game.arena.yOffset)
+        batch.draw(dot1,head.x.toFloat()+game.arena.xOffset,head.y.toFloat()+game.arena.yOffset)
         flash = false
     }
 
@@ -49,12 +37,10 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
         body.add(0, head)
         head += direction
         head = head.wrap(game.arena)
-
         while (body.size > maxLength) {
             body.removeAt(body.lastIndex)
         }
     }
-
 
     fun doInput() {
         player.input.leftStick.apply {
@@ -70,8 +56,8 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
 
     fun hasCollidedWith(other: Snake) = other.body.any { hasCollidedWith(it) }
 
-
     fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
+
     fun doCollision() {
         if(game.timer<4f) return // invulnerable at start
         game.stunSound.play()
@@ -80,21 +66,5 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
         maxLength -= 2
         flash = true
     }
-
-
 }
-
-
-private val Rectangle.left: Int
-    get() = x.toInt()
-
-private val Rectangle.right: Int
-    get() = (x + width).toInt()
-
-private val Rectangle.top: Int
-    get() = (y + height).toInt()
-
-private val Rectangle.bottom: Int
-    get() = y.toInt()
-
 
