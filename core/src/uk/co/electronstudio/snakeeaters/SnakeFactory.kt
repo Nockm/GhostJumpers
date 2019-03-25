@@ -22,10 +22,10 @@ class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelNames
     val suddenDeath = BinMenuItem("Sudden Death: ", false)
     val maxFoods = NumberMenuItem("Maximum foods on screen: ", 5, 0, 20)
     val minFoods = NumberMenuItem("Minimum foods on screen: ", 1, 1, 20)
-    val foodGoal = NumberMenuItem("Score required to win: ", 6, 0, 50)
+    val foodGoal = NumberMenuItem("Length required to win: ", 6, 2, 50)//6
     val speed = NumberMenuItem("Snake speed: ", 2, 0, 10)
     val foodValue = NumberMenuItem("Value of each food eaten: ", 2, 1, 30)
-    val speedup = BinMenuItem("Speed increase: ", true)
+    val speedup = BinMenuItem("Speed increase: ", false)
     val maxLevelsToPlay = MultiChoiceMenuItem("How many levels to play: ",
         choices = listOf("ALL","1","2","3"),
         intValues = listOf( Int.MAX_VALUE,1,2,3))
