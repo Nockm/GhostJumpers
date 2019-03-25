@@ -14,14 +14,15 @@ import uk.co.electronstudio.retrowar.SimpleGame
 import uk.co.electronstudio.retrowar.screens.GameSession
 
 /* The God class */
-class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDeath: Boolean = false,
-                val maxFoods: Int = 2, val minFoods: Int = 1, val foodGoal: Int = 1, var speed: Float = 0.1f,
-                val speedup: Boolean = false, val foodValue: Int = 1, val levelNames: List<String>,
-                val levelIndex: Int = 0) :
+class SnakeGame(session: GameSession, val pathPrefix: String = "",
+                val suddenDeath: Boolean = false, val maxFoods: Int = 2, val minFoods: Int = 1,
+                val foodGoal: Int = 1, var speed: Float = 0.1f, val speedup: Boolean = false,
+                val foodValue: Int = 1, val levelNames: List<String>,
+                val levelIndex: Int = 0, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
 
     private val levelName = levelNames[levelIndex]
-    var arena = Arena(this, Gdx.files.internal(pathPrefix + "levels/" + levelName))
+    var arena = Arena(this, Gdx.files.internal(pathPrefix + "levels/" + levelName+".png"))
     private var winner: Snake? = null
 
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "jump_jade.wav"))
@@ -106,7 +107,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
         tickTimer += deltaTime
         if (levelComplete) {
             if (tickTimer > 10f) {
-                if (levelIndex < levelNames.lastIndex) {
+                if (levelIndex < levelNames.lastIndex && maxLevelsToPlay >= 2) {
                     session.nextGame = SnakeGame(session,
                         pathPrefix,
                         suddenDeath,
@@ -117,7 +118,8 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
                         speedup,
                         foodValue,
                         levelNames,
-                        levelIndex + 1)
+                        levelIndex + 1,
+                        maxLevelsToPlay-1)
                 }
                 gameover()
             }
@@ -137,13 +139,12 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
 
     override fun doDrawing(batch: Batch) {
         arena.doDrawing(batch)
-        var y = height
+
         for (snake in snakes) {
             snake.doDrawing(batch)
-            font.color = snake.player.color2
-            font.draw(batch, snake.maxLength.toString(), 0f, y)
-            y -= 8f
+
         }
+        drawScores(batch)
         for (food in foods) {
             batch.draw(multiFlash.getKeyFrame(tickTimer),
                 food.x.toFloat() + arena.xOffset,
@@ -152,6 +153,19 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
         winner?.let {
             font.color = it.player.color2
             font.draw(batch, "Winner\n\n${it.player.name}", 0f, height / 2f, width, Align.center, false)
+        }
+    }
+
+    private fun drawScores(batch: Batch) {
+        var y = height
+        for (i in 0..snakes.size - 1 step 2) {
+            font.color = snakes[i].player.color2
+            font.draw(batch, snakes[i].maxLength.toString(), 2f, y)
+            if(i<snakes.size-1) {
+                font.color = snakes[i + 1].player.color2
+                font.draw(batch, snakes[i + 1].maxLength.toString(), 80f, y)
+            }
+            y -= 8f
         }
     }
 
