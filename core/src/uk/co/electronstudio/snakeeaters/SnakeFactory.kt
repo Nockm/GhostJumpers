@@ -5,16 +5,16 @@ import com.badlogic.gdx.graphics.Texture
 import uk.co.electronstudio.retrowar.AbstractGameFactory
 import uk.co.electronstudio.retrowar.App
 import uk.co.electronstudio.retrowar.Game
+import uk.co.electronstudio.retrowar.LevelLoader
 import uk.co.electronstudio.retrowar.menu.BinMenuItem
 import uk.co.electronstudio.retrowar.menu.MultiChoiceMenuItem
 import uk.co.electronstudio.retrowar.menu.NumberMenuItem
 import uk.co.electronstudio.retrowar.screens.GameSession
-import java.io.File
 
 /*
  * Used by RetroWar to create our main class
  */
-class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelNames(path+"levels"), path) {
+class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelFiles(path+"levels"), path) {
     override val description = "A snake game. Eat the apples, grow as large as you can and trip up other players!"
     override val image: Texture = Texture("${pathPrefix}snake.png")
 
@@ -44,15 +44,15 @@ class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelNames
     override fun createWithDefaultSettings(session: GameSession): Game {
         return SnakeGame(session,
             pathPrefix,
-            levelNames = levels!!,
+            levelFiles = levels!!,
             levelIndex = level,
             maxLevelsToPlay = 1)
     }
 }
 
-fun getAllLevelNames(folderName:String): List<String>{
+fun getAllLevelFiles(folderName:String): List<LevelLoader>{
     val folder = Gdx.files.internal(folderName)
     return folder.list().filter { it.extension()=="png" }.map {
-        it.name().dropLast(4)
+        LevelLoader(it, it, it.nameWithoutExtension())
     }
 }

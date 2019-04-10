@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.utils.Align
-import sun.audio.AudioPlayer.player
 import uk.co.electronstudio.retrowar.App
+import uk.co.electronstudio.retrowar.LevelLoader
 import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.SimpleGame
 import uk.co.electronstudio.retrowar.screens.GameSession
@@ -17,12 +17,11 @@ import uk.co.electronstudio.retrowar.screens.GameSession
 /* The God class */
 class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDeath: Boolean = false,
                 val maxFoods: Int = 2, val minFoods: Int = 1, val foodGoal: Int = 1, var speed: Float = 0.1f,
-                val speedup: Boolean = false, val foodValue: Int = 1, val levelNames: List<String>,
+                val speedup: Boolean = false, val foodValue: Int = 1, val levelFiles: List<LevelLoader>,
                 val levelIndex: Int = 0, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
 
-    private val levelName = levelNames[levelIndex]
-    var arena = Arena(this, Gdx.files.internal(pathPrefix + "levels/" + levelName + ".png"))
+    var arena = Arena(this, levelFiles[levelIndex].file)
     private var winner: Snake? = null
     private var overallWinner: Player? = null
 
@@ -97,7 +96,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
                         speed,
                         speedup,
                         foodValue,
-                        levelNames,
+                        levelFiles,
                         levelIndex + 1,
                         maxLevelsToPlay - 1)
                 }else{
@@ -168,7 +167,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
 
     }
 
-    private fun thereAreMoreLevelsToPlay() = levelIndex < levelNames.lastIndex && maxLevelsToPlay >= 2
+    private fun thereAreMoreLevelsToPlay() = levelIndex < levelFiles.lastIndex && maxLevelsToPlay >= 2
 
 
     override fun doDrawing(batch: Batch) {
