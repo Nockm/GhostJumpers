@@ -14,7 +14,7 @@ import uk.co.electronstudio.retrowar.screens.GameSession
 /*
  * Used by RetroWar to create our main class
  */
-class SnakeFactory(path: String) : AbstractGameFactory("Snake", getAllLevelFiles(path+"levels"), path) {
+class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLevelFiles(path+"levels"), path) {
     override val description = "A snake game. Eat the apples, grow as large as you can and trip up other players!"
     override val image: Texture = Texture("${pathPrefix}snake.png")
 
