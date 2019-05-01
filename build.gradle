@@ -99,7 +99,7 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         //compile fileTree('../../retrogame/core/build/libs')
-        compile "uk.co.electronstudio.retrowar:retrowar-common:0.19.1"
+        compile "uk.co.electronstudio.retrowar:retrowar-common:0.19.2"
       //  compile name: 'retrowar-common', version: '+'
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
       //  compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"

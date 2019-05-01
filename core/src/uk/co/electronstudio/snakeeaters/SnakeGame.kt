@@ -15,10 +15,10 @@ import uk.co.electronstudio.retrowar.SimpleGame
 import uk.co.electronstudio.retrowar.screens.GameSession
 
 /* The God class */
-class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDeath: Boolean = false,
-                val maxFoods: Int = 2, val minFoods: Int = 1, val foodGoal: Int = 1, var speed: Float = 0.1f,
-                val speedup: Boolean = false, val foodValue: Int = 1, val levelFiles: List<LevelLoader>,
-                val levelIndex: Int = 0, val maxLevelsToPlay: Int) :
+class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: Boolean,
+                val maxFoods: Int, val minFoods: Int, val foodGoal: Int, var speed: Float,
+                val speedup: Boolean = false, val foodValue: Int, val levelFiles: List<LevelLoader>,
+                val levelIndex: Int, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
     companion object {
         val INVULNERABLE_PERIOD = 4f
@@ -130,7 +130,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
 
 
         if (speedup) {
-            speed += 0.001f
+            speed += 0.0005f
         }
     }
 

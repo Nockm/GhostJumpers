@@ -20,11 +20,11 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
 
 
     val suddenDeath = BinMenuItem("Sudden Death: ", false)
-    val maxFoods = NumberMenuItem("Maximum foods on screen: ", 5, 0, 20)
+    val maxFoods = NumberMenuItem("Maximum foods on screen: ", 10, 0, 20)
     val minFoods = NumberMenuItem("Minimum foods on screen: ", 1, 1, 20)
-    val foodGoal = NumberMenuItem("Length required to win: ", 6, 2, 50)//6
-    val speed = NumberMenuItem("Snake speed: ", 2, 0, 10)
-    val foodValue = NumberMenuItem("Value of each food eaten: ", 2, 1, 30)
+    val foodGoal = NumberMenuItem("Food required to win: ", 10, 2, 20)//6
+    val speed = NumberMenuItem("Snake speed: ", 4, 0, 10)
+    val foodValue = NumberMenuItem("Value of each food eaten: ", 4, 1, 30)
     val speedup = BinMenuItem("Speed increase: ", false)
     val maxLevelsToPlay = MultiChoiceMenuItem("How many levels to play: ",
         choices = listOf("ALL","1","2","3"),
@@ -35,17 +35,39 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
     )
 
     override fun create(session: GameSession): Game {
-        return SnakeGame(session, pathPrefix, suddenDeath.value,  maxFoods.value, minFoods.value, foodGoal.value,
+        return SnakeGame(session, pathPrefix, suddenDeath.value,  maxFoods.value, minFoods.value, foodGoal.value*foodValue.value,
                 speed.value.toFloat()*0.03f, speedup.value,
                 foodValue.value, levels!!, level, maxLevelsToPlay.getSelectedInt())
     }
 
-    override fun createWithDefaultSettings(session: GameSession): Game {
+    override fun createWithTournamentSettings(session: GameSession): Game {
         return SnakeGame(session,
             pathPrefix,
             levelFiles = levels!!,
             levelIndex = level,
+            suddenDeath = true,
+            maxFoods = 10,
+            minFoods = 1,
+            foodGoal =  Int.MAX_VALUE,
+            foodValue = 10,
+            speed = 1*0.03f,
+            speedup = true,
             maxLevelsToPlay = 1)
+    }
+
+    override fun createWithSimpleSettings(session: GameSession): Game {
+        return SnakeGame(session,
+            pathPrefix,
+            levelFiles = levels!!,
+            levelIndex = level,
+            suddenDeath = false,
+            maxFoods = 10,
+            minFoods = 1,
+            foodGoal = 100,
+            foodValue = 10,
+            speed = 5*0.03f,
+            speedup = false,
+            maxLevelsToPlay = Int.MAX_VALUE)
     }
 }
 
