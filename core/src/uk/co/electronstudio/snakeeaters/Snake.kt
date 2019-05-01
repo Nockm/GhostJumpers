@@ -3,6 +3,7 @@ package uk.co.electronstudio.snakeeaters
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
+import uk.co.electronstudio.retrowar.Color
 import uk.co.electronstudio.snakeeaters.Direction.EAST
 import uk.co.electronstudio.snakeeaters.Direction.NORTH
 import uk.co.electronstudio.snakeeaters.Direction.SOUTH
@@ -19,8 +20,8 @@ typealias Body = MutableList<Point>
 class Snake(val game: SnakeGame, val player: Player, var direction: Direction, startingPoint: Point,
             var maxLength: Int = 10) {
     private val body: Body = arrayListOf(startingPoint)
-    private val dot1: Texture = makePixel(player.color2)
-    private val dot2: Texture = makePixel(player.color)
+    private val dot1: Texture =  makePixel(if(player.color2 == Color(0, 0, 0)) Color.WHITE else player.color2)
+  //  private val dot2: Texture = makePixel(player.color)
     private val dot3: Texture = makePixel(Color.WHITE)
     var head: Point = startingPoint
     private var flash = false

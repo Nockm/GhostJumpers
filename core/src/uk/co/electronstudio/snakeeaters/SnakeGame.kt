@@ -142,6 +142,8 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
         timer += deltaTime
         tickTimer += deltaTime
 
+        if(session.state==GameSession.GameState.MENU) return
+
         when (state) {
             State.PLAYING -> {
                 if (tickTimer > delay()) {
