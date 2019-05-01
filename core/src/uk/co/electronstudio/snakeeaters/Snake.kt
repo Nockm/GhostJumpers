@@ -59,7 +59,7 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
     fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
 
     fun doCollision() {
-        if(game.timer<4f) return // invulnerable at start
+        if(game.timer<SnakeGame.INVULNERABLE_PERIOD) return // invulnerable at start
         game.stunSound.play()
         body.removeAt(0)
         head -= direction

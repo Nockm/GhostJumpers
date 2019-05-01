@@ -35,7 +35,6 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
     )
 
     override fun create(session: GameSession): Game {
-        App.app.configureSessionWithPreSelectedInputDevice(session)
         return SnakeGame(session, pathPrefix, suddenDeath.value,  maxFoods.value, minFoods.value, foodGoal.value,
                 speed.value.toFloat()*0.03f, speedup.value,
                 foodValue.value, levels!!, level, maxLevelsToPlay.getSelectedInt())

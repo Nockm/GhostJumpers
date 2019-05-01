@@ -20,6 +20,9 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
                 val speedup: Boolean = false, val foodValue: Int = 1, val levelFiles: List<LevelLoader>,
                 val levelIndex: Int = 0, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
+    companion object {
+        val INVULNERABLE_PERIOD = 4f
+    }
 
     var arena = Arena(this, levelFiles[levelIndex].file)
     private var winner: Snake? = null
@@ -28,7 +31,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "jump_jade.wav"))
     val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "fall_jade.wav"))
     val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "bonus_jade.wav"))
-    val spawnSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "hit_jade.wav"))
+    val moveSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "move2.wav"))
     //    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "justin1.ogg", androidFile =
     //    pathPrefix + "JustinLong.ogg", iOSFile = pathPrefix + "justin1.wav")
     val multiFlash =
@@ -52,7 +55,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
     }
 
     fun tick() {
-        spawnSound.play()
+        moveSound.play()
         for (snake in snakes) {
             snake.move()
         }
@@ -114,13 +117,15 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
         }
         deadFoods.clear()
 
-        snakes.removeAll(deadSnakes)
-        deadSnakes.clear()
+        if(deadSnakes.isNotEmpty()) {
+            snakes.removeAll(deadSnakes)
+            deadSnakes.clear()
 
-        if(snakes.isEmpty()){
-            state=State.GAMEOVER
-            overallWinner = session.findWinners().first()
-            overallWinner?.incMetaScore()
+            if (snakes.isEmpty()) {
+                state = State.GAMEOVER
+                overallWinner = session.findWinners().first()
+                overallWinner?.incMetaScore()
+            }
         }
 
 
@@ -169,17 +174,20 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
 
     private fun thereAreMoreLevelsToPlay() = levelIndex < levelFiles.lastIndex && maxLevelsToPlay >= 2
 
+    val flicker = Animation<Boolean>(1f/15, true, false)
 
     override fun doDrawing(batch: Batch) {
         arena.doDrawing(batch)
 
-        for (snake in snakes) {
-            snake.doDrawing(batch)
-
+        if(timer > INVULNERABLE_PERIOD || flicker.getKeyFrame(timer, true)) {
+            for (snake in snakes) {
+                snake.doDrawing(batch)
+            }
         }
+
         drawScores(batch)
         for (food in foods) {
-            batch.draw(multiFlash.getKeyFrame(tickTimer),
+            batch.draw(multiFlash.getKeyFrame(timer),
                 food.x.toFloat() + arena.xOffset,
                 food.y.toFloat() + arena.yOffset)
         }
@@ -226,7 +234,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String = "", val suddenDea
         jumpSound.dispose()
         stunSound.dispose()
         bonusSound.dispose()
-        spawnSound.dispose()
+        moveSound.dispose()
         // music.dispose()
     }
 }
