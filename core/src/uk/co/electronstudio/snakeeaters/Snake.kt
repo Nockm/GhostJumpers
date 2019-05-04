@@ -19,6 +19,7 @@ typealias Body = MutableList<Point>
 
 class Snake(val game: SnakeGame, val player: Player, var direction: Direction, startingPoint: Point,
             var maxLength: Int = 10) {
+    private var requestedDirection: Direction = direction
     private val body: Body = arrayListOf(startingPoint)
     private val dot1: Texture =  makePixel(if(player.color2 == Color(0, 0, 0)) Color.WHITE else player.color2)
   //  private val dot2: Texture = makePixel(player.color)
@@ -35,6 +36,12 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
     }
 
     fun move() {
+        direction = when (requestedDirection){
+            WEST -> if (direction == EAST) EAST else WEST
+            EAST -> if (direction == WEST) WEST else EAST
+            SOUTH-> if (direction == NORTH) NORTH else SOUTH
+            NORTH -> if (direction == SOUTH) SOUTH else NORTH
+        }
         body.add(0, head)
         head += direction
         head = head.wrap(game.arena)
@@ -45,12 +52,12 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
 
     fun doInput() {
         player.input.leftStick.apply {
-            direction = when {
-                x < -0.3 -> if (direction == EAST) EAST else WEST
-                x > 0.3 -> if (direction == WEST) WEST else EAST
-                y > 0.3 -> if (direction == NORTH) NORTH else SOUTH
-                y < -0.3 -> if (direction == SOUTH) SOUTH else NORTH
-                else -> direction
+            requestedDirection = when {
+                x < -0.6 ->  WEST
+                x > 0.6 -> EAST
+                y > 0.6 ->SOUTH
+                y < -0.6 ->  NORTH
+                else -> requestedDirection
             }
         }
     }

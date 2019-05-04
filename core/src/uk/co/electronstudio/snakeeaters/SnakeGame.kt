@@ -21,7 +21,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                 val levelIndex: Int, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
     companion object {
-        val INVULNERABLE_PERIOD = 4f
+        val INVULNERABLE_PERIOD = 6f
     }
 
     var arena = Arena(this, levelFiles[levelIndex].file)
