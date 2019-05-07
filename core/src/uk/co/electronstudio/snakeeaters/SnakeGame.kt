@@ -21,7 +21,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                 val levelIndex: Int, val maxLevelsToPlay: Int) :
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
     companion object {
-        val INVULNERABLE_PERIOD = 6f
+        val INVULNERABLE_PERIOD = 10f
     }
 
     var arena = Arena(this, levelFiles[levelIndex].file)
@@ -179,7 +179,9 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     val flicker = Animation<Boolean>(1f/15, true, false)
 
     override fun doDrawing(batch: Batch) {
-        arena.doDrawing(batch)
+        if(state==State.PLAYING) {
+            arena.doDrawing(batch)
+        }
 
         if(timer > INVULNERABLE_PERIOD || flicker.getKeyFrame(timer, true)) {
             for (snake in snakes) {
