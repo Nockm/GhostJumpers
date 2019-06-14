@@ -1,6 +1,7 @@
 package uk.co.electronstudio.snakeeaters
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Colors
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import uk.co.electronstudio.retrowar.Color
@@ -17,12 +18,20 @@ enum class Direction(val vx: Int, val vy: Int) {
 
 typealias Body = MutableList<Point>
 
+fun findGoodColor(vararg colors: Color): Color {
+    val c = colors.firstOrNull{it !=  Color(0, 0, 0) && it != Color(255,255,255)}
+    return c ?: Color.PURPLE
+}
+
 class Snake(val game: SnakeGame, val player: Player, var direction: Direction, startingPoint: Point,
             var maxLength: Int = 10) {
     private var requestedDirection: Direction = direction
     private val body: Body = arrayListOf(startingPoint)
-    private val dot1: Texture =  makePixel(if(player.color2 == Color(0, 0, 0)) Color.WHITE else player.color2)
-  //  private val dot2: Texture = makePixel(player.color)
+    private val dot1: Texture =  makePixel(findGoodColor(player.color2, player.color))
+
+
+
+    //  private val dot2: Texture = makePixel(player.color)
     private val dot3: Texture = makePixel(Color.WHITE)
     var head: Point = startingPoint
     private var flash = false
@@ -67,7 +76,6 @@ class Snake(val game: SnakeGame, val player: Player, var direction: Direction, s
     fun hasCollidedWith(point: Point) = (head.x == point.x && head.y == point.y)
 
     fun doCollision() {
-        if(game.timer<SnakeGame.INVULNERABLE_PERIOD) return // invulnerable at start
         game.stunSound.play()
         body.removeAt(0)
         head -= direction

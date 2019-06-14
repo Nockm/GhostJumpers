@@ -48,7 +48,7 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
             suddenDeath = true,
             maxFoods = 10,
             minFoods = 1,
-            foodGoal =  Int.MAX_VALUE,
+            foodGoal =  100,
             foodValue = 10,
             speed = 1*0.03f,
             speedup = true,

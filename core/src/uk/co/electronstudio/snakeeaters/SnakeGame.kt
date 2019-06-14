@@ -13,6 +13,8 @@ import uk.co.electronstudio.retrowar.LevelLoader
 import uk.co.electronstudio.retrowar.Player
 import uk.co.electronstudio.retrowar.SimpleGame
 import uk.co.electronstudio.retrowar.screens.GameSession
+import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.INVULNERABLE_PERIOD
+import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.PAUSE_TIME
 
 /* The God class */
 class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: Boolean,
@@ -22,6 +24,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     SimpleGame(session, 88f, 50f, BitmapFont(Gdx.files.internal(pathPrefix + "5pix.fnt")), false) {
     companion object {
         val INVULNERABLE_PERIOD = 10f
+        val PAUSE_TIME = 5f
     }
 
     var arena = Arena(this, levelFiles[levelIndex].file)
@@ -72,18 +75,20 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                     snake1.player.score++
                 }
             }
-            for (snake2 in snakes) {
-                if (snake1.hasCollidedWith(snake2)) {
+            if(timer>INVULNERABLE_PERIOD){
+                for (snake2 in snakes) {
+                    if (snake1.hasCollidedWith(snake2)) {
+                        snake1.doCollision()
+                        if (snake1.maxLength < 1 || suddenDeath) {
+                            deadSnakes.add(snake1)
+                        }
+                    }
+                }
+                if (!arena.emptyCellAt(snake1.head)) {
                     snake1.doCollision()
                     if (snake1.maxLength < 1 || suddenDeath) {
                         deadSnakes.add(snake1)
                     }
-                }
-            }
-            if (!arena.emptyCellAt(snake1.head)) {
-                snake1.doCollision()
-                if (snake1.maxLength < 1 || suddenDeath) {
-                    deadSnakes.add(snake1)
                 }
             }
             if (snake1.maxLength > foodGoal) {
@@ -155,15 +160,15 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                 }
             }
             State.GAMEOVER -> {
-                if (tickTimer > 10f) gameover()
+                if (tickTimer > PAUSE_TIME) gameover()
             }
             State.LEVEL_COMPLETED -> {
-                if (tickTimer > 10f) {
+                if (tickTimer > PAUSE_TIME) {
                     gameover()
                 }
             }
             State.GAME_COMPLETED -> {
-                if (tickTimer > 10f) {
+                if (tickTimer > PAUSE_TIME) {
                     gameover()
                 }
             }
@@ -179,7 +184,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     val flicker = Animation<Boolean>(1f/15, true, false)
 
     override fun doDrawing(batch: Batch) {
-        if(state==State.PLAYING) {
+        if(state==State.PLAYING && (!flicker.getKeyFrame(timer, true) || timer > 1f)) {
             arena.doDrawing(batch)
         }
 
@@ -212,7 +217,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     private fun drawScores(batch: Batch) {
         var y = height
         players.forEachIndexed { index, player ->
-            font.color = player.color2
+            font.color = findGoodColor(player.color2, player.color)
             if (index % 2 == 0) {
                 font.draw(batch, player.score.toString(), 2f, y)
             } else {
