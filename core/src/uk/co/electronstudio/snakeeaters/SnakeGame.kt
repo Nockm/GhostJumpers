@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.utils.Align
-import uk.co.electronstudio.retrowar.App
-import uk.co.electronstudio.retrowar.LevelLoader
-import uk.co.electronstudio.retrowar.Player
-import uk.co.electronstudio.retrowar.SimpleGame
+import uk.co.electronstudio.retrowar.*
 import uk.co.electronstudio.retrowar.screens.GameSession
 import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.INVULNERABLE_PERIOD
 import uk.co.electronstudio.snakeeaters.SnakeGame.Companion.PAUSE_TIME
@@ -35,8 +32,8 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "fall_jade.wav"))
     val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "bonus_jade.wav"))
     val moveSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "move2.wav"))
-    //    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "justin1.ogg", androidFile =
-    //    pathPrefix + "JustinLong.ogg", iOSFile = pathPrefix + "justin1.wav")
+    val music = CrossPlatformMusic.create(desktopFile = pathPrefix + "SnakeGame.ogg", androidFile =
+       pathPrefix + "SnakeGame.ogg", iOSFile = pathPrefix + "SnakeGame.mp3")
     val multiFlash =
         Animation<Texture>(1f / 30f, makePixel(Color.RED), makePixel(Color.BLUE), makePixel(Color.GREEN)).also {
             it.playMode = Animation.PlayMode.LOOP
@@ -128,7 +125,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
 
             if (snakes.isEmpty()) {
                 state = State.GAMEOVER
-                overallWinner = session.findWinners().first()
+                overallWinner = session.findWinners().firstOrNull()
                 overallWinner?.incMetaScore()
             }
         }
@@ -228,13 +225,13 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     }
 
     override fun show() {
-        // if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
+        if (Prefs.BinPref.MUSIC.isEnabled()) music.play()
         App.app.manualGC?.disable()
         session.nextGame = null
     }
 
     override fun hide() {
-        //music.stop()
+        music.stop()
         App.app.manualGC?.enable()
         App.app.manualGC?.doGC()
     }
@@ -244,7 +241,7 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
         stunSound.dispose()
         bonusSound.dispose()
         moveSound.dispose()
-        // music.dispose()
+        music.dispose()
     }
 }
 
