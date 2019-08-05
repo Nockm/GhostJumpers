@@ -56,6 +56,7 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
     }
 
     override fun createWithSimpleSettings(session: GameSession): Game {
+        println("level $level levels ${levels!![0].file}")
         return SnakeGame(session,
             pathPrefix,
             levelFiles = levels!!,
@@ -73,7 +74,8 @@ class SnakeFactory(path: String) : AbstractGameFactory("SnakeEaters", getAllLeve
 
 fun getAllLevelFiles(folderName:String): List<LevelLoader>{
     val folder = Gdx.files.internal(folderName)
-    return folder.list().filter { it.extension()=="png" }.map {
+    return folder.list().filter { it.extension()=="png" }.sortedBy { it.name() }.map {
+        println("level $it")
         LevelLoader(it, it, it.nameWithoutExtension())
     }
 }

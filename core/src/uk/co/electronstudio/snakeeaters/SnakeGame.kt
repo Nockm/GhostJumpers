@@ -28,6 +28,8 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     private var winner: Snake? = null
     private var overallWinner: Player? = null
 
+    val startSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "SnakeStart.wav"))
+    val endSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "SnakeEnd.wav"))
     val jumpSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "jump_jade.wav"))
     val stunSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "fall_jade.wav"))
     val bonusSound = Gdx.audio.newSound(Gdx.files.internal(pathPrefix + "bonus_jade.wav"))
@@ -106,10 +108,11 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                         maxLevelsToPlay - 1)
                 }else{
                     state=State.GAME_COMPLETED
-
                     overallWinner = session.findWinners().first()
                     overallWinner?.incMetaScore()
                 }
+                music.stop()
+                endSound.play()
             }
         }
 
@@ -127,6 +130,9 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
                 state = State.GAMEOVER
                 overallWinner = session.findWinners().firstOrNull()
                 overallWinner?.incMetaScore()
+                music.stop()
+                endSound.play()
+
             }
         }
 
@@ -138,7 +144,10 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
 
     override fun playerJoined(player: Player) {
         snakes.add(Snake(this, player, Direction.SOUTH, arena.getRandomEmptyPoint(), 2))
+        startSound.play()
     }
+
+
 
     override fun doLogic(deltaTime: Float) {
         timer += deltaTime
@@ -237,6 +246,8 @@ class SnakeGame(session: GameSession, val pathPrefix: String, val suddenDeath: B
     }
 
     override fun dispose() {
+        startSound.dispose()
+        endSound.dispose()
         jumpSound.dispose()
         stunSound.dispose()
         bonusSound.dispose()
